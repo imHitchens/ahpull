@@ -13,23 +13,6 @@ env:
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Alpine Linux.
 jobs:
-<<<<<<< HEAD
-publish-ahpull-docker-image:
-runs-on: alpine-latest
-steps:
-- uses: actions/checkout@v2
-- name: Login to GitHub Container Registry
-- uses: docker/login-action@v1
-- with:
-      registry: ghcr.io
-      username: ${{ github.actor }}
-      password: ${{ secrets.GITHUB_TOKEN }}
-- name: Build the ahpull Docker image
-run: |
-      docker build . --tag ghcr.io/imHitchens/ahpull:latest
-      docker run ghcr.io/imHitchens/ahpull:latest
-      docker push ghcr.io/imHitchens/ahpull:latest
-=======
   build-and-push-image:
     runs-on: alpine-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
@@ -75,4 +58,3 @@ run: |
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
       
->>>>>>> 582abb9 (Third)
