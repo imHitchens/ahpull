@@ -1,0 +1,19 @@
+[{
+  "regions": {
+    "North America": "us",
+    "Europe": "eu",
+    "Korea": "kr",
+    "Taiwan": "tw"  },
+  "namespaces": {
+    "era": {
+      "static": "static-classic1x-",
+      "dynamic": "dynamic-classic1x-",
+      "profile": "profile-classic1x-"
+    },
+    "progression": {
+      "static": "static-classic-",
+      "dynamic": "dynamic-classic-",
+      "profile": "profile-classic-"
+    }
+  }
+}]
