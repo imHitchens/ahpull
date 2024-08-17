@@ -15,7 +15,7 @@ env:
 # There is a single job in this workflow. It's configured to run on the latest available version of Alpine Linux.
 jobs:
   build-and-push-image:
-    runs-on: alpine-latest
+    runs-on: ubuntu-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
       contents: read
