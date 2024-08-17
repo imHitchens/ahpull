@@ -20,7 +20,7 @@ do
                     mkdir -p data/$namespace$region/$connectedRealmId/$ahid
                     write_date=$(date +%s)
                     curl --header "Authorization: Bearer $access_token" "https://$region.api.blizzard.com/data/wow/connected-realm/$connectedRealmId/auctions/$ahid?namespace=$namespace$region&$locale&$access_token" | 
-                    jq " { region: \"$region$namespace\", connectedRealmId: $connectedRealmId, id: $ahid, time: $write_date, auction: .auctions[] } " > data/$namespace$region/$connectedRealmId/$ahid/$write_date.json ;
+                    jq " { region: \"$namespace$region\", connectedRealmId: $connectedRealmId, id: $ahid, time: $write_date, auction: .auctions[] } " > data/$namespace$region/$connectedRealmId/$ahid/$write_date.json ;
                 done;
             done;
         done;
