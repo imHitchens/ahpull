@@ -19,13 +19,13 @@ do
                 while read ahid;
                 do
                     mkdir -p data/tmp
-                    mkdir -p mkdir -p data/auctions
-                    write_date=$(date +%s)
+                    mkdir -p data/auctions
+                    write_date=$(date +%s%3N)
                     curl --header "Authorization: Bearer $access_token" "https://$region.api.blizzard.com/data/wow/connected-realm/$connectedRealmId/auctions/$ahid?namespace=$namespace$region&$locale&$access_token" | 
                     jq ".auctions[]" | 
                     jq "{ region: \"$namespace$region\", connectedRealmId: $connectedRealmId, ahid: $ahid, id: .id, time: $write_date, itemid: .item.id, itemrand: .item.rand, itemseed: .item.seed, time_left: .time_left, bid: .bid, buyout: .buyout, quantity: .quantity }" | 
-                    jq -r "join(\";\")" >> data/tmp/$namespace$region$connectedRealmId_$time.csv
-                    mv data/tmp/$namespace$region$connectedRealmId_$time.csv data/auctions/$namespace$region$connectedRealmId_$time.csv ;
+                    jq -r "join(\";\")" >> data/tmp/$namespace$region$connectedRealmId$write_date.csv
+                    mv data/tmp/$namespace$region$connectedRealmId$write_date.csv data/auctions/$namespace$region$connectedRealmId$write_date.csv ;
                 done;
             done;
         done;
