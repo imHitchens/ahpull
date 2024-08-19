@@ -14,13 +14,17 @@ do
             do
                 connectedRealmId=${connectedRealmId##*/}
                 connectedRealmId=${connectedRealmId%\?*}
-                curl --header "Authorization: Bearer $access_token" "https://$region.api.blizzard.com/data/wow/connected-realm/$connectedRealmId/auctions/index?namespace=$namespace$region&locale=$locale&access_token=$access_token" | jq '.auctions[]' | jq '.id' | 
+                curl --header "Authorization: Bearer $access_token" "https://$region.api.blizzard.com/data/wow/connected-realm/$connectedRealmId/auctions/index?namespace=$namespace$region&locale=$locale&access_token=$access_token" | 
+                jq '.auctions[]' | jq '.id' | 
                 while read ahid;
                 do
-                    mkdir -p data/$namespace$region/$connectedRealmId
+                    mkdir -p data/$namespace$region/tmp
                     write_date=$(date +%s)
                     curl --header "Authorization: Bearer $access_token" "https://$region.api.blizzard.com/data/wow/connected-realm/$connectedRealmId/auctions/$ahid?namespace=$namespace$region&$locale&$access_token" | 
-                    jq ".auctions[]" | jq "{ region: \"$namespace$region\", connectedRealmId: $connectedRealmId, ahid: $ahid, id: .id, time: $write_date, itemid: .item.id, itemrand: .item.rand, itemseed: .item.seed, time_left: .time_left, bid: .bid, buyout: .buyout, quantity: .quantity }" | jq -r "join(\";\")" >> data/$namespace$region/$connectedRealmId.json ;
+                    jq ".auctions[]" | 
+                    jq "{ region: \"$namespace$region\", connectedRealmId: $connectedRealmId, ahid: $ahid, id: .id, time: $write_date, itemid: .item.id, itemrand: .item.rand, itemseed: .item.seed, time_left: .time_left, bid: .bid, buyout: .buyout, quantity: .quantity }" | 
+                    jq -r "join(\";\")" >> data/$namespace$region/tmp/$connectedRealmId_$time.json
+                    mv data/$namespace$region/tmp/$connectedRealmId_$time.json data/$namespace$region/$connectedRealmId_$time.json ;
                 done;
             done;
         done;
