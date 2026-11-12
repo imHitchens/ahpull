@@ -45,9 +45,35 @@ do
     jq -r '.[].regions[]' namespaces.json |
     while read region;
     do
-        jq -r '.[].namespaces[].dynamic' namespaces.json |
-        while read namespace;
+        jq -r '.[].namespaces | to_entries[] | "\(.key) \(.value.dynamic)"' namespaces.json |
+        while read label namespace;
         do
+            if [ "$label" = "forever" ]; then
+                # Forever has no realms: auction houses hang off rulesets instead
+                # (/data/wow/ruleset/{id}/auctions/ — trailing slash required).
+                log "RULESETS $namespace$region: fetching ruleset index"
+                rulesets=$(curl -s --header "Authorization: Bearer $access_token" "https://$region.api.blizzard.com/data/wow/ruleset/index?namespace=$namespace$region")
+                rsids=$(echo "$rulesets" | jq -r '.rulesets[]?.id' 2>/dev/null)
+                if [ -z "$rsids" ]; then
+                    log "WARN  $namespace$region: no rulesets -> $(echo "$rulesets" | head -c 200)"
+                    continue
+                fi
+                log "RULESETS $namespace$region: $(echo "$rsids" | wc -l) rulesets"
+                for rsid in $rsids; do
+                    base="https://$region.api.blizzard.com/data/wow/ruleset/$rsid/auctions"
+                    ahids=$(curl -s --header "Authorization: Bearer $access_token" "$base/?namespace=$namespace$region" | jq -r '.auctions[]?.id' 2>/dev/null)
+                    if [ -z "$ahids" ]; then
+                        log "WARN  $namespace$region ruleset $rsid: no auction houses"
+                        continue
+                    fi
+                    log "RULESET $namespace$region ruleset $rsid: auction houses $(echo $ahids)"
+                    for ahid in $ahids; do
+                        write_auctions "$base/$ahid?namespace=$namespace$region" "$rsid" "$ahid"
+                    done
+                done
+                continue
+            fi
+
             log "REALMS $namespace$region: fetching connected realm index"
             realms=$(curl -s --header "Authorization: Bearer $access_token" "https://$region.api.blizzard.com/data/wow/connected-realm/index?namespace=$namespace$region")
             hrefs=$(echo "$realms" | jq -r '.connected_realms[]?.href' 2>/dev/null)

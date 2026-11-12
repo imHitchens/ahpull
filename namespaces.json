@@ -9,6 +9,16 @@
       "static": "static-forever-",
       "dynamic": "dynamic-forever-",
       "profile": "profile-forever-"
+    },
+    "era": {
+      "static": "static-classic1x-",
+      "dynamic": "dynamic-classic1x-",
+      "profile": "profile-classic1x-"
+    },
+    "progression": {
+      "static": "static-classic-",
+      "dynamic": "dynamic-classic-",
+      "profile": "profile-classic-"
     }
   }
 }]
